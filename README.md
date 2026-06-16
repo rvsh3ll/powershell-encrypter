@@ -122,4 +122,4 @@ This tool **obfuscates** scripts and adds a password gate. It is **not** a subst
 
 ## License
 
-No license file is included. Add one if you plan to distribute this project.
+MIT License. See [LICENSE](LICENSE).

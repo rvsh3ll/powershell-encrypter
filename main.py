@@ -13,6 +13,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.padding import PKCS7
 
 PROJECT_URL = "https://github.com/rvsh3ll/powershell-encrypter"
+VERSION = Path(__file__).with_name("VERSION").read_text(encoding="utf-8").strip()
 
 
 def get_random_bytes(length: int) -> bytes:
@@ -187,7 +188,9 @@ def get_ps1_wrapper(
         "Add-Type -AssemblyName $b3",
         "Add-Type -AssemblyName $b4",
         f"$b6='{PROJECT_URL}'",
+        f"$b7='{VERSION}'",
         "Write-Output $b6",
+        "Write-Output $b7",
         "if(-not [string]::IsNullOrEmpty($m0)){$msg=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($m0));if($m1 -eq 'console'){Write-Output $msg}else{Add-Type -AssemblyName $b5;[System.Windows.Forms.MessageBox]::Show($msg,'Message',[System.Windows.Forms.MessageBoxButtons]::OK,[System.Windows.Forms.MessageBoxIcon]::Information)|Out-Null}}",
         "$p1=& $b1 $a1 $a2",
         "$w1=& $b1 $a3 $a4",
@@ -276,10 +279,11 @@ def encrypt_script(settings: dict[str, str | bool]) -> tuple[bool, str, str]:
 
 
 def show_encryption_form() -> None:
+    print(f"PowerShell Script Encryptor {VERSION}")
     print(PROJECT_URL)
 
     root = tk.Tk()
-    root.title("PowerShell Script Encryptor")
+    root.title(f"PowerShell Script Encryptor {VERSION}")
     root.geometry("524x472")
     root.resizable(False, False)
 
@@ -410,13 +414,16 @@ def show_encryption_form() -> None:
     tk.Label(root, text="Password (leave blank for no password):").place(x=padding, y=306)
     tk.Entry(root, textvariable=password_var, show="*", width=58).place(x=padding, y=326)
 
+    version_label = tk.Label(root, text=VERSION)
+    version_label.place(x=padding, y=352)
+
     credit_label = tk.Label(
         root,
         text=PROJECT_URL,
         fg="blue",
         cursor="hand2",
     )
-    credit_label.place(x=padding, y=352)
+    credit_label.place(x=padding + 56, y=352)
     credit_label.bind(
         "<Button-1>",
         lambda _event: subprocess.run(["explorer", PROJECT_URL], check=False),

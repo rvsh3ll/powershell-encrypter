@@ -3,7 +3,10 @@
 $ErrorActionPreference = 'Stop'
 
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
+$version = (Get-Content -LiteralPath (Join-Path $root 'VERSION') -Raw).Trim()
 Set-Location $root
+
+Write-Host "PowerShell Script Encryptor $version"
 
 function Get-PythonLauncher {
     if (Get-Command python -ErrorAction SilentlyContinue) {

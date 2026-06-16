@@ -1,5 +1,7 @@
 #requires -Version 5.1
 
+$Script:RootPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+$Script:ProjectVersion = (Get-Content -LiteralPath (Join-Path $Script:RootPath 'VERSION') -Raw).Trim()
 $Script:ProjectUrl = 'https://github.com/rvsh3ll/powershell-encrypter'
 
 function Get-RandomBytes {
@@ -138,7 +140,7 @@ function Show-EncryptionForm {
     $browseLeft = $padding + $fieldWidth + 8
 
     $form = New-Object System.Windows.Forms.Form
-    $form.Text = 'PowerShell Script Encryptor'
+    $form.Text = "PowerShell Script Encryptor $Script:ProjectVersion"
     $form.Font = New-Object System.Drawing.Font('Segoe UI', 9)
     $form.ClientSize = New-Object System.Drawing.Size(524, 472)
     $form.FormBorderStyle = 'FixedDialog'
@@ -284,10 +286,17 @@ function Show-EncryptionForm {
     $passwordBox.Top = 326
     $form.Controls.Add($passwordBox)
 
+    $versionLabel = New-Object System.Windows.Forms.Label
+    $versionLabel.Text = $Script:ProjectVersion
+    $versionLabel.AutoSize = $true
+    $versionLabel.Left = $padding
+    $versionLabel.Top = 352
+    $form.Controls.Add($versionLabel)
+
     $creditLabel = New-Object System.Windows.Forms.LinkLabel
     $creditLabel.Text = $Script:ProjectUrl
     $creditLabel.AutoSize = $true
-    $creditLabel.Left = $padding
+    $creditLabel.Left = $padding + 56
     $creditLabel.Top = 352
     $projectUrl = $Script:ProjectUrl
     $creditLabel.Add_LinkClicked({
@@ -552,7 +561,9 @@ function Get-Ps1Wrapper {
         'Add-Type -AssemblyName $b3'
         'Add-Type -AssemblyName $b4'
         "`$b6='$($Script:ProjectUrl)'"
+        "`$b7='$($Script:ProjectVersion)'"
         'Write-Output $b6'
+        'Write-Output $b7'
         'if(-not [string]::IsNullOrEmpty($m0)){$msg=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($m0));if($m1 -eq ''console''){Write-Output $msg}else{Add-Type -AssemblyName $b5;[System.Windows.Forms.MessageBox]::Show($msg,''Message'',[System.Windows.Forms.MessageBoxButtons]::OK,[System.Windows.Forms.MessageBoxIcon]::Information)|Out-Null}}'
         '$p1=& $b1 $a1 $a2'
         '$w1=& $b1 $a3 $a4'
@@ -603,6 +614,7 @@ function Save-EncryptedPs1 {
 }
 
 function Main {
+    Write-Host "PowerShell Script Encryptor $Script:ProjectVersion"
     Write-Host $Script:ProjectUrl
     Show-EncryptionForm
 }
