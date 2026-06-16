@@ -227,8 +227,9 @@ def get_ps1_wrapper(
         "$m2.CopyTo($m3)",
         "$t1=[Text.Encoding]::UTF8.GetString($m3.ToArray())",
         "$r1=$PSScriptRoot",
-        "if([string]::IsNullOrEmpty($r1)){$r1=Split-Path -Parent $MyInvocation.MyCommand.Path}",
+        "if([string]::IsNullOrEmpty($r1) -and $MyInvocation.MyCommand.Path){$r1=Split-Path -Parent $MyInvocation.MyCommand.Path}",
         "$r2=$MyInvocation.MyCommand.Path",
+        "if([string]::IsNullOrEmpty($r2)){$r2=$PSCommandPath}",
         '$s1=[ScriptBlock]::Create("param([string]`$PSScriptRoot,[string]`$PSCommandPath)`n"+$t1)',
         "& $s1 -PSScriptRoot $r1 -PSCommandPath $r2",
     ]

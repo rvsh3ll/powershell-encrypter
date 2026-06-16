@@ -1,6 +1,19 @@
 #requires -Version 5.1
 
-$Script:RootPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+function Get-ScriptRootPath {
+    if (-not [string]::IsNullOrEmpty($PSCommandPath)) {
+        return Split-Path -Parent $PSCommandPath
+    }
+    if ($MyInvocation.MyCommand.Path) {
+        return Split-Path -Parent $MyInvocation.MyCommand.Path
+    }
+    if (-not [string]::IsNullOrEmpty($PSScriptRoot)) {
+        return $PSScriptRoot
+    }
+    return (Get-Location).Path
+}
+
+$Script:RootPath = Get-ScriptRootPath
 $Script:ProjectUrl = 'https://github.com/rvsh3ll/powershell-encrypter'
 $versionPath = Join-Path $Script:RootPath 'VERSION'
 if (Test-Path -LiteralPath $versionPath) {
@@ -600,8 +613,9 @@ function Get-Ps1Wrapper {
         '$m2.CopyTo($m3)'
         '$t1=[Text.Encoding]::UTF8.GetString($m3.ToArray())'
         '$r1=$PSScriptRoot'
-        'if([string]::IsNullOrEmpty($r1)){$r1=Split-Path -Parent $MyInvocation.MyCommand.Path}'
+        'if([string]::IsNullOrEmpty($r1) -and $MyInvocation.MyCommand.Path){$r1=Split-Path -Parent $MyInvocation.MyCommand.Path}'
         '$r2=$MyInvocation.MyCommand.Path'
+        'if([string]::IsNullOrEmpty($r2)){$r2=$PSCommandPath}'
         '$s1=[ScriptBlock]::Create("param([string]`$PSScriptRoot,[string]`$PSCommandPath)`n"+$t1)'
         '& $s1 -PSScriptRoot $r1 -PSCommandPath $r2'
     )) -join "`r`n"
