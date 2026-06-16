@@ -13,7 +13,13 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.padding import PKCS7
 
 PROJECT_URL = "https://github.com/rvsh3ll/powershell-encrypter"
-VERSION = Path(__file__).with_name("VERSION").read_text(encoding="utf-8").strip()
+_DEFAULT_VERSION = "v1.0.1"
+_version_path = Path(__file__).with_name("VERSION")
+VERSION = (
+    _version_path.read_text(encoding="utf-8").strip()
+    if _version_path.is_file()
+    else _DEFAULT_VERSION
+)
 
 
 def get_random_bytes(length: int) -> bytes:

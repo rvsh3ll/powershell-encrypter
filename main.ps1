@@ -1,8 +1,14 @@
 #requires -Version 5.1
 
 $Script:RootPath = Split-Path -Parent $MyInvocation.MyCommand.Path
-$Script:ProjectVersion = (Get-Content -LiteralPath (Join-Path $Script:RootPath 'VERSION') -Raw).Trim()
 $Script:ProjectUrl = 'https://github.com/rvsh3ll/powershell-encrypter'
+$versionPath = Join-Path $Script:RootPath 'VERSION'
+if (Test-Path -LiteralPath $versionPath) {
+    $Script:ProjectVersion = (Get-Content -LiteralPath $versionPath -Raw).Trim()
+}
+else {
+    $Script:ProjectVersion = 'v1.0.1'
+}
 
 function Get-RandomBytes {
     param([int]$Length)

@@ -3,7 +3,12 @@
 $ErrorActionPreference = 'Stop'
 
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
-$version = (Get-Content -LiteralPath (Join-Path $root 'VERSION') -Raw).Trim()
+$versionPath = Join-Path $root 'VERSION'
+$version = if (Test-Path -LiteralPath $versionPath) {
+    (Get-Content -LiteralPath $versionPath -Raw).Trim()
+} else {
+    'v1.0.1'
+}
 Set-Location $root
 
 Write-Host "PowerShell Script Encryptor $version"
